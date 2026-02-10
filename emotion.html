@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Mood Switch Game</title>
+
+<style>
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.game-container {
+    background: #fff;
+    width: 340px;
+    padding: 25px;
+    border-radius: 16px;
+    text-align: center;
+    box-shadow: 0 12px 30px rgba(0,0,0,0.3);
+}
+
+h1 {
+    margin-bottom: 5px;
+}
+
+.status {
+    display: flex;
+    justify-content: space-between;
+    font-weight: bold;
+    margin-top: 10px;
+}
+
+.progress-bar {
+    width: 100%;
+    height: 20px;
+    background: #ddd;
+    border-radius: 10px;
+    overflow: hidden;
+    margin: 15px 0;
+}
+
+#progress {
+    height: 100%;
+    width: 50%;
+    background: linear-gradient(90deg, #4caf50, #81c784);
+    transition: width 0.4s;
+}
+
+.buttons button {
+    width: 100%;
+    padding: 11px;
+    margin: 6px 0;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 15px;
+    background: #667eea;
+    color: white;
+    transition: transform 0.2s, background 0.3s;
+}
+
+.buttons button:hover {
+    background: #5a67d8;
+    transform: scale(1.05);
+}
+
+#message {
+    font-weight: bold;
+    margin-top: 10px;
+    min-height: 22px;
+}
+
+#restart {
+    display: none;
+    margin-top: 15px;
+    padding: 10px;
+    border-radius: 8px;
+    border: none;
+    background: #ff5722;
+    color: white;
+    cursor: pointer;
+}
+</style>
+</head>
+
+<body>
+
+<div class="game-container">
+    <h1>🎮 Mood Switch</h1>
+    <p>Reach 100 mood to win</p>
+
+    <div class="status">
+        <span>Moves: <span id="moves">7</span></span>
+        <span>Mood: <span id="score">50</span></span>
+    </div>
+
+    <div class="progress-bar">
+        <div id="progress"></div>
+    </div>
+
+    <div class="buttons">
+        <button onclick="play(1)">🎵 Listen Music</button>
+        <button onclick="play(2)">📚 Study</button>
+        <button onclick="play(3)">📱 Scroll Phone</button>
+        <button onclick="play(4)">😴 Take Rest</button>
+    </div>
+
+    <p id="message"></p>
+
+    <button id="restart" onclick="restartGame()">🔁 Restart</button>
+</div>
+
+<script>
+let moodScore = 50;
+let moves = 7;
+
+const scoreEl = document.getElementById("score");
+const movesEl = document.getElementById("moves");
+const messageEl = document.getElementById("message");
+const progressEl = document.getElementById("progress");
+const restartBtn = document.getElementById("restart");
+const buttons = document.querySelectorAll(".buttons button");
+
+function play(choice) {
+    if (moves <= 0) return;
+
+    switch (choice) {
+        case 1:
+            moodScore += 20;
+            messageEl.textContent = "Music boosted your mood 🎵";
+            break;
+        case 2:
+            moodScore -= 10;
+            messageEl.textContent = "Study made you tired 📚";
+            break;
+        case 3:
+            moodScore -= 15;
+            messageEl.textContent = "Scrolling distracted you 📱";
+            break;
+        case 4:
+            moodScore += 10;
+            messageEl.textContent = "Rest refreshed you 😴";
+            break;
+    }
+
+    // Random life event
+    const event = Math.random();
+    if (event < 0.25) {
+        moodScore += 10;
+        messageEl.textContent += " | Good news 🎉";
+    } else if (event > 0.85) {
+        moodScore -= 10;
+        messageEl.textContent += " | Bad mood 😞";
+    }
+
+    moodScore = Math.max(0, Math.min(100, moodScore));
+    moves--;
+
+    updateUI();
+    checkGame();
+}
+
+function updateUI() {
+    scoreEl.textContent = moodScore;
+    movesEl.textContent = moves;
+    progressEl.style.width = moodScore + "%";
+}
+
+function checkGame() {
+    if (moodScore >= 100) {
+        messageEl.textContent = "🎉 YOU WIN! You're HAPPY!";
+        endGame();
+    } else if (moves === 0) {
+        messageEl.textContent = "❌ GAME OVER! Try again.";
+        endGame();
+    }
+}
+
+function endGame() {
+    buttons.forEach(btn => btn.disabled = true);
+    restartBtn.style.display = "block";
+}
+
+function restartGame() {
+    moodScore = 50;
+    moves = 7;
+    updateUI();
+    messageEl.textContent = "";
+    buttons.forEach(btn => btn.disabled = false);
+    restartBtn.style.display = "none";
+}
+</script>
+
+</body>
+</html>
